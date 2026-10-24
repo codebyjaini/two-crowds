@@ -8,7 +8,7 @@ import os
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from mcp.server.transport_security import TransportSecuritySettings
 
 from . import service
@@ -108,7 +108,7 @@ def page(title: str, body: str, mode: str) -> HTMLResponse:
     )
     return HTMLResponse(
         f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)} · Two Crowds</title><meta name="description" content="Polymarket odds against the probability the options market implies, scored on every resolved market.">
+<title>{esc(title)} · Two Crowds</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#0a0c11"><meta name="description" content="Polymarket odds against the probability the options market implies, scored on every resolved market.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body><main>
 <header class="top"><a class="brand" href="/"><span class="logo"><i></i><i></i></span>Two Crowds</a>
@@ -468,6 +468,19 @@ and prediction-market data from the Unusual Whales MCP server.</p></div>
 
 
 # ---- JSON API -------------------------------------------------------------
+
+
+# The logo: Polymarket violet and options amber, side by side.
+FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs><clipPath id="r"><rect width="64" height="64" rx="15"/></clipPath></defs>
+<g clip-path="url(#r)"><rect width="32" height="64" fill="#8b6dff"/><rect x="32" width="32" height="64" fill="#ffb020"/></g>
+</svg>"""
+
+
+@app.get("/favicon.svg", include_in_schema=False)
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> Response:
+    return Response(FAVICON, media_type="image/svg+xml", headers={"cache-control": "public, max-age=86400"})
 
 
 @app.get("/api/status")
