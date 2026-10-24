@@ -4,6 +4,8 @@
 
 ▶ **Demo video (1:20): [youtu.be/bvo6ilc_MNg](https://youtu.be/bvo6ilc_MNg)**
 
+![Two Crowds: Polymarket's Brier score against the options market's, and what taking the options side returned](docs/screenshots/today.png)
+
 Every day Polymarket lists questions like *Will NVIDIA (NVDA) close above $210 on October 23?* and
 *Micron (MU) Up or Down on October 23?*. The options market answers the same questions with real money, it just
 doesn't say so out loud. Two Crowds works out the options market's probability for each Polymarket question, using
@@ -35,6 +37,15 @@ before the close give the same answer (1,300 of 1,352), so stale prices don't ex
 
 - **Ask Claude:** an MCP server (four read-only tools, one prompt) and a Claude skill that also uses the Unusual Whales
   MCP server for live flow and prediction-market data.
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Open Polymarket stock questions where the two crowds split, with both probabilities and the gap](docs/screenshots/splits.png) | ![Cumulative return from taking the options side on Polymarket, day by day](docs/screenshots/track-record.png) |
+| **Where they split now**: both crowds on every open question | **Track record**: taking the options side, day by day |
+| ![Unusual Whales' Unusual Predictions: smart money and possible insiders on Polymarket](docs/screenshots/unusual-predictions.png) | ![The Ask page: an MCP tool call and its result](docs/screenshots/ask.png) |
+| **Unusual Predictions**: what Unusual Whales sees on Polymarket | **Ask**: the MCP tools, run from the page |
 
 ## How the options probability works
 
