@@ -125,3 +125,7 @@ twocrowds/web.py          dashboard, JSON API (/api/today, /api/record, /api/mar
 twocrowds/mcp_server.py   MCP tools and prompt
 skill/SKILL.md            Claude skill
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE). Market data belongs to its providers: Unusual Whales data is used under your own API key and its terms, and Polymarket data comes from its public API.
