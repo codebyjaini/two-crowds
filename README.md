@@ -7,7 +7,8 @@
 > [Open the live site](https://two-crowds.onrender.com) · [Watch the 80-second demo](https://youtu.be/bvo6ilc_MNg) ·
 > MCP endpoint `https://two-crowds.onrender.com/mcp-server/mcp`
 
-<sub>Free hosting: after 15 idle minutes the first visit takes up to a minute to wake the server.</sub>
+<sub>Free hosting: after 15 idle minutes the first visit takes up to a minute to wake the server. If the video opens in
+240p, YouTube is still processing the HD version: choose ⚙️ → Quality → 720p.</sub>
 
 ---
 
