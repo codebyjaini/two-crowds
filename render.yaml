@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: two-crowds
+    runtime: docker
+    plan: free
+    healthCheckPath: /how
+    envVars:
+      - key: UW_API_KEY
+        sync: false
+      - key: UW_RPM
+        value: "100"
+      - key: PUBLIC_HOSTS
+        sync: false
