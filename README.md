@@ -2,7 +2,10 @@
 
 **Polymarket says one thing. The options market says another. Who's right?**
 
-▶ **Demo video (1:20): [youtu.be/bvo6ilc_MNg](https://youtu.be/bvo6ilc_MNg)**
+**Live: [two-crowds.onrender.com](https://two-crowds.onrender.com)** · ▶ **Demo video (1:20): [youtu.be/bvo6ilc_MNg](https://youtu.be/bvo6ilc_MNg)** ·
+**MCP:** `https://two-crowds.onrender.com/mcp-server/mcp`
+
+> Hosted on Render's free tier: if nobody has visited for 15 minutes, the first page load takes up to a minute while it wakes up.
 
 ![Two Crowds: Polymarket's Brier score against the options market's, and what taking the options side returned](docs/screenshots/today.png)
 
@@ -97,7 +100,8 @@ docker build -t two-crowds . && docker run -p 8040:8040 -e UW_API_KEY=... two-cr
 ## Use it from Claude
 
 ```bash
-claude mcp add --transport http two-crowds https://<your-host>/mcp-server/mcp    # hosted, or http://127.0.0.1:8040/... locally
+claude mcp add --transport http two-crowds https://two-crowds.onrender.com/mcp-server/mcp   # the hosted server
+claude mcp add --transport http two-crowds http://127.0.0.1:8040/mcp-server/mcp            # or your own, while `serve` runs
 claude mcp add two-crowds -- .venv/bin/python -m twocrowds.cli mcp              # or over stdio
 ```
 

@@ -99,7 +99,13 @@ def esc(s: Any) -> str:
 
 
 def page(title: str, body: str, mode: str) -> HTMLResponse:
-    badge = '<span class="live"><i></i>Live · Unusual Whales + Polymarket</span>' if mode == "live" else '<span class="live demo"><i></i>Demo · saved real run</span>'
+    badge = (
+        '<span class="live"><i></i>Live · Unusual Whales + Polymarket</span>'
+        if mode == "live"
+        else '<span class="live demo"><i></i>Warming up · showing the saved run</span>'
+        if mode == "warming"
+        else '<span class="live demo"><i></i>Demo · saved real run</span>'
+    )
     return HTMLResponse(
         f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} · Two Crowds</title><meta name="description" content="Polymarket odds against the probability the options market implies, scored on every resolved market.">
@@ -462,6 +468,11 @@ and prediction-market data from the Unusual Whales MCP server.</p></div>
 
 
 # ---- JSON API -------------------------------------------------------------
+
+
+@app.get("/api/status")
+def api_status() -> JSONResponse:
+    return JSONResponse(service.status())
 
 
 @app.get("/api/today")

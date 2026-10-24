@@ -82,29 +82,68 @@ def track_record(gap: float = 0.10) -> dict[str, Any]:
     }
 
 
-_board: dict[str, Any] = {"value": None, "at": 0.0}
+_board: dict[str, Any] = {"value": None, "at": 0.0, "error": None, "error_at": None, "running": False}
 _board_lock = threading.Lock()
 BOARD_TTL = 15 * 60
 
 
 def refresh_board() -> dict[str, Any]:
-    pm, uw = clients()
-    value = {**live_board(pm, uw), "mode": "live"}
     with _board_lock:
-        _board["value"], _board["at"] = value, time.time()
-    return value
+        _board["running"] = True
+    try:
+        pm, uw = clients()
+        value = {**live_board(pm, uw), "mode": "live"}
+        with _board_lock:
+            _board["value"], _board["at"], _board["error"] = value, time.time(), None
+        return value
+    except Exception as err:
+        with _board_lock:
+            _board["error"], _board["error_at"] = f"{type(err).__name__}: {err}"[:500], time.time()
+        raise
+    finally:
+        with _board_lock:
+            _board["running"] = False
+
+
+def _refresh_in_background() -> None:
+    with _board_lock:
+        if _board["running"]:
+            return
+    threading.Thread(target=lambda: _safe(refresh_board), daemon=True, name="board-once").start()
+
+
+def _safe(fn) -> None:
+    try:
+        fn()
+    except Exception as err:
+        print(f"board refresh failed: {err}", flush=True)
 
 
 def today() -> dict[str, Any]:
+    """The live board, cached. Never blocks a page on the APIs: until the first live board is ready
+    (or if refreshing fails), it serves the saved real run and says so."""
     if mode() == "demo":
         return {**demo()["board"], "mode": "demo"}
     with _board_lock:
         cached, at = _board["value"], _board["at"]
-    if cached and time.time() - at < BOARD_TTL:
-        return cached
     if cached:
-        return cached  # stale but instant; the background refresher replaces it
-    return refresh_board()
+        if time.time() - at > BOARD_TTL:
+            _refresh_in_background()
+        return cached
+    _refresh_in_background()
+    return {**demo()["board"], "mode": "warming"}
+
+
+def status() -> dict[str, Any]:
+    with _board_lock:
+        return {
+            "mode": mode(),
+            "board_ready": _board["value"] is not None,
+            "board_age_seconds": round(time.time() - _board["at"]) if _board["value"] else None,
+            "refreshing": _board["running"],
+            "last_error": _board["error"],
+            "last_error_age_seconds": round(time.time() - _board["error_at"]) if _board["error_at"] else None,
+        }
 
 
 def start_refresher(every: float = 600) -> None:
@@ -114,10 +153,7 @@ def start_refresher(every: float = 600) -> None:
 
     def loop() -> None:
         while True:
-            try:
-                refresh_board()
-            except Exception as err:  # keep serving the last good board
-                print(f"board refresh failed: {err}", flush=True)
+            _safe(refresh_board)  # keep serving the last good board on failure
             time.sleep(every)
 
     threading.Thread(target=loop, daemon=True, name="board-refresher").start()
